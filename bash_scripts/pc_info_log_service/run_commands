@@ -1,0 +1,2 @@
+sudo systemctl enable pc_info_service.timer
+sudo systemctl enable pc_info_service.service

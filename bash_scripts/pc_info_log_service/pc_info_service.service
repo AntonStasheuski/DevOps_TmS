@@ -1,0 +1,10 @@
+[Unit]
+Description=File system Monitoring -- /home/anton/DevOps_TmS/bash_scripts/pc_info_log_service/pc_info_monitoring.sh
+After=local-fs.target systemd-sysctl.service systemd-modules-load.service
+
+[Service]
+Type=forking
+ExecStart=/home/anton/DevOps_TmS/bash_scripts/pc_info_log_service/pc_info_monitoring.sh
+
+[Install]
+WantedBy=multi-user.target
