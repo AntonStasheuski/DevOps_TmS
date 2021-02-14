@@ -1,11 +1,15 @@
 #!/bin/bash
 
-function dirsolder {
+HOME=~/
+ETC_HOSTS=/etc/hosts
+IFS=$'\n'
+
+function dirs_older {
         logger "dirs older"
-        IFS=$'\n'
         read -p "Input dir's older than: " days
         date=$(date +"%b %d %H:%M" -d "$days day ago")
-        for var in $(ls -ld ~/*/  | awk '{printf "%s %s %s %s\n", $6, $7, $8, $9}')
+        vari="$HOME_FOLDER*/"
+        for var in $(ls -ld $HOME*/  | awk '{printf "%s %s %s %s\n", $6, $7, $8, $9}')
         do
                 if [ "$date" \> "$var" ]
                 then
@@ -16,12 +20,11 @@ function dirsolder {
         done
 }
 
-function filesolder {
+function files_older {
         logger "files older"
-        IFS=$'\n'
         read -p "Input file's older than: " days
         date=$(date +"%b %d %H:%M" -d "$days day ago")
-        for var in $(ls -l -p ~/ | egrep -v /$ | sed -n '1!p' | awk '{printf "%s %s %s %s\n", $6, $7, $8, $9}')
+        for var in $(ls -l -p $HOME | egrep -v /$ | sed -n '1!p' | awk '{printf "%s %s %s %s\n", $6, $7, $8, $9}')
         do
                 if [ "$date" \> "$var" ]
                 then
@@ -32,7 +35,7 @@ function filesolder {
         done
 }
 
-function pcmonitoring {
+function pc_monitoring {
         logger "pc monitoring"
         tput setaf 1 ; echo "Total PIDS: `top -bn1 | grep Tasks | awk '{printf $2}'`" ; tput setaf 7
         tput setaf 2 ; echo "Total MEMORY usage: `free -m | awk 'NR==2{printf "%s/%s", $3,$2 }'` MB" ; tput setaf 7
@@ -40,27 +43,25 @@ function pcmonitoring {
         tput setaf 4 ; echo "Total DISC usage: `df -h | awk '$NF=="/"{printf "%d/%d (%s)\n", $3,$2,$5}'` GB" ; tput setaf 7
 }
 
-function addapptohosts {
-        logger "add app tohosts"
-        sudo grep -qxF '192.168.56.4 myapp.com' /etc/hosts || echo '192.168.56.4 myapp.com' >> /etc/hosts
+function add_app_to_hosts {
+        logger "add app to hosts"
+        sudo grep -qxF '192.168.56.4 myapp.com' $ETC_HOSTS || echo '192.168.56.4 myapp.com' >> $ETC_HOSTS
 }
 
-function changeappinhosts {
+function change_app_in_hosts {
         logger "change app in hosts"
         read -p "Input app name: " app
-        sudo sed -i -- "s/192.168.56.4 myapp.com/192.168.56.4 $app/g" /etc/hosts
+        sudo sed -i -- "s/.*myapp\.com/$app/g" $ETC_HOSTS
 }
 
-function deletefile {
+function delete_file {
         logger "deleting"
-        while true; do
-                if ls -l ~/ | grep 'DELETE_ME' > /dev/null
-                then
-                        logger "deleting" "find"
-                        $(date > ~/temp) ; $(rm -rf ~/DELETE_ME)
-                fi
-                sleep 5
+        while [ ! -d  ~/DELETE_ME ] && [ ! -f  ~/DELETE_ME ]
+        do
+                sleep 2
         done
+        logger "deleting" "find"
+        $(date > ~/temp) ; $(rm -rf ~/DELETE_ME)
 }
 
 function logger {
@@ -74,25 +75,29 @@ function logger {
         fi
 }
 
-while true; do
-        echo "-------------------Menu--------------------"
-        echo "| 1 - Dir's older tnan: n days            |"
-        echo "| 2 - File's older tnan: n days           |"
-        echo "| 3 - System monitoring                   |"
-        echo "| 4 - Add myapp to /etc/hosts             |"
-        echo "| 5 - Chanfe myapp in /etc/hosts          |"
-        echo "| 6 - Delete DELETE_ME in ~/ (parallel)   |"
-        echo "| 0 - Exit                                |"
-        echo "-------------------------------------------"
-        read -p "Select action: " action
+function menu {
+        while true; do
+                echo "-------------------Menu--------------------"
+                echo "| 1 - Dir's older tnan: n days            |"
+                echo "| 2 - File's older tnan: n days           |"
+                echo "| 3 - System monitoring                   |"
+                echo "| 4 - Add myapp to /etc/hosts             |"
+                echo "| 5 - Chanfe myapp in /etc/hosts          |"
+                echo "| 6 - Delete DELETE_ME in ~/              |"
+                echo "| 0 - Exit                                |"
+                echo "-------------------------------------------"
+                read -p "Select action: " action
 
-        case "$action" in
-                1   ) dirsolder ;;
-                2   ) filesolder ;;
-                3   ) pcmonitoring ;;
-                4   ) addapptohosts ;;
-                5   ) changeappinhosts ;;
-                6   ) deletefile & ;;
-                0   ) exit ;;
-        esac
-done
+                case "$action" in
+                        1   ) dirs_older ;;
+                        2   ) files_older ;;
+                        3   ) pc_monitoring ;;
+                        4   ) add_app_to_hosts ;;
+                        5   ) change_app_in_hosts ;;
+                        6   ) delete_file ;;
+                        0   ) exit ;;
+                esac
+        done
+}
+
+menu
