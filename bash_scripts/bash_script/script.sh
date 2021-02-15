@@ -1,15 +1,13 @@
 #!/bin/bash
 
-HOME=~/
 ETC_HOSTS=/etc/hosts
 IFS=$'\n'
 
 function dirs_older {
         logger "dirs older"
-        read -p "Input dir's older than: " days
-        date=$(date +"%b %d %H:%M" -d "$days day ago")
+        date=$(date +"%b %d %H:%M" -d "$1 day ago")
         vari="$HOME_FOLDER*/"
-        for var in $(ls -ld $HOME*/  | awk '{printf "%s %s %s %s\n", $6, $7, $8, $9}')
+        for var in $(ls -ld $2*/  | awk '{printf "%s %s %s %s\n", $6, $7, $8, $9}')
         do
                 if [ "$date" \> "$var" ]
                 then
@@ -22,9 +20,8 @@ function dirs_older {
 
 function files_older {
         logger "files older"
-        read -p "Input file's older than: " days
-        date=$(date +"%b %d %H:%M" -d "$days day ago")
-        for var in $(ls -l -p $HOME | egrep -v /$ | sed -n '1!p' | awk '{printf "%s %s %s %s\n", $6, $7, $8, $9}')
+        date=$(date +"%b %d %H:%M" -d "$1 day ago")
+        for var in $(ls -l -p $2 | egrep -v /$ | sed -n '1!p' | awk '{printf "%s %s %s %s\n", $6, $7, $8, $9}')
         do
                 if [ "$date" \> "$var" ]
                 then
@@ -56,12 +53,12 @@ function change_app_in_hosts {
 
 function delete_file {
         logger "deleting"
-        while [ ! -d  ~/DELETE_ME ] && [ ! -f  ~/DELETE_ME ]
+        while [ ! -d  $1DELETE_ME ] && [ ! -f  $1DELETE_ME ]
         do
                 sleep 2
         done
         logger "deleting" "find"
-        $(date > ~/temp) ; $(rm -rf ~/DELETE_ME)
+        $(date > ~/temp) ; $(rm -rf $1DELETE_ME)
 }
 
 function logger {
@@ -75,29 +72,12 @@ function logger {
         fi
 }
 
-function menu {
-        while true; do
-                echo "-------------------Menu--------------------"
-                echo "| 1 - Dir's older tnan: n days            |"
-                echo "| 2 - File's older tnan: n days           |"
-                echo "| 3 - System monitoring                   |"
-                echo "| 4 - Add myapp to /etc/hosts             |"
-                echo "| 5 - Chanfe myapp in /etc/hosts          |"
-                echo "| 6 - Delete DELETE_ME in ~/              |"
-                echo "| 0 - Exit                                |"
-                echo "-------------------------------------------"
-                read -p "Select action: " action
+case $1 in
+    dirs_older) "$@"; exit;;
+    files_older) "$@"; exit;;
+    pc_monitoring) "$@"; exit;;
+    add_app_to_hosts) "$@"; exit;;
+    change_app_in_hosts) "$@"; exit;;
+    delete_file) "$@"; exit;;
+esac
 
-                case "$action" in
-                        1   ) dirs_older ;;
-                        2   ) files_older ;;
-                        3   ) pc_monitoring ;;
-                        4   ) add_app_to_hosts ;;
-                        5   ) change_app_in_hosts ;;
-                        6   ) delete_file ;;
-                        0   ) exit ;;
-                esac
-        done
-}
-
-menu
