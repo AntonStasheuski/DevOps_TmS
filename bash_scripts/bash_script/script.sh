@@ -4,10 +4,11 @@ ETC_HOSTS=/etc/hosts
 IFS=$'\n'
 
 function dirs_older {
+        PATH_TO_SEARCH=$1
+        FILES_AGE=$2
         logger "dirs older"
-        date=$(date +"%b %d %H:%M" -d "$1 day ago")
-        vari="$HOME_FOLDER*/"
-        for var in $(ls -ld $2*/  | awk '{printf "%s %s %s %s\n", $6, $7, $8, $9}')
+        date=$(date +"%b %d %H:%M" -d "$FILES_AGE day ago")
+        for var in $(ls -ld $PATH_TO_SEARCH*/  | awk '{printf "%s %s %s %s\n", $6, $7, $8, $9}')
         do
                 if [ "$date" \> "$var" ]
                 then
@@ -19,9 +20,11 @@ function dirs_older {
 }
 
 function files_older {
+        PATH_TO_SEARCH=$1
+        FILES_AGE=$2
         logger "files older"
-        date=$(date +"%b %d %H:%M" -d "$1 day ago")
-        for var in $(ls -l -p $2 | egrep -v /$ | sed -n '1!p' | awk '{printf "%s %s %s %s\n", $6, $7, $8, $9}')
+        date=$(date +"%b %d %H:%M" -d "$FILES_AGE day ago")
+        for var in $(ls -l -p $PATH_TO_SEARCH | egrep -v /$ | sed -n '1!p' | awk '{printf "%s %s %s %s\n", $6, $7, $8, $9}')
         do
                 if [ "$date" \> "$var" ]
                 then
@@ -53,19 +56,21 @@ function change_app_in_hosts {
 
 function delete_file {
         logger "deleting"
-        while [ ! -d  $1DELETE_ME ] && [ ! -f  $1DELETE_ME ]
+        DELETE_FILE_PATH=$1DELETE_ME
+        while [ ! -d  $DELETE_FILE_PATH ] && [ ! -f  $DELETE_FILE_PATH ]
         do
                 sleep 2
         done
         logger "deleting" "find"
-        $(date > ~/temp) ; $(rm -rf $1DELETE_ME)
+        $(date > ~/temp) ; $(rm -rf $DELETE_FILE_PATH)
 }
 
 function logger {
+        action=$1
         if [ $# -eq 1 ]
         then
                 user_pid=`ps aux | grep './script.sh' | awk 'NR==1{printf "User: %s, PID: %s", $1, $2}'`
-                log="Date: `date`, Action: $1, $user_pid"
+                log="Date: `date`, Action: $action, $user_pid"
                 echo $log >> ~/script.log
         else
                 echo "Date: `date`, Find DELETE_ME in home folder, delete it" >> ~/script.log
