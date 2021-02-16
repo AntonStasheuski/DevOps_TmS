@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ETC_HOSTS=/etc/hosts
+ETC_HOSTS="/etc/hosts"
 IFS=$'\n'
 
 function dirs_older {
@@ -85,4 +85,3 @@ case $1 in
     change_app_in_hosts) "$@"; exit;;
     delete_file) "$@"; exit;;
 esac
-
