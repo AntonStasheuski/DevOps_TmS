@@ -50,7 +50,7 @@ function add_app_to_hosts {
 
 function change_app_in_hosts {
         logger "change app in hosts"
-        read -p "Input app name: " app
+        app=$1
         sudo sed -i -- "s/.*myapp\.com/$app/g" $ETC_HOSTS
 }
 
