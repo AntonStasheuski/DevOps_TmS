@@ -55,8 +55,8 @@ function ssh_command {
     local user=$1
     local ip_adr=$2
     local command=$3
-    if grep "^${ip_adr}$" "$SERVER_LIST_PATH"; then
-        if grep "^${command}$" "$SSH_COMMANDS_PATH"; then
+    if grep "^${ip_adr}$" "$SERVER_LIST_PATH" &>/dev/null; then
+        if grep "^${command}$" "$SSH_COMMANDS_PATH" &>/dev/null; then
             ssh  "$user"@"$ip_adr" -f "$command"
         else
             echo "Can't find command in $SSH_COMMANDS_PATH"
