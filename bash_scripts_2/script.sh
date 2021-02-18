@@ -21,6 +21,7 @@ help()
 ################################################################################
 
 SERVER_LIST_PATH="/etc/server_list"
+SSH_COMMANDS_PATH="/etc/ssh_commands"
 SENT_DEFAULT_VALUE="SENT=”First Second Tree Goal Last”"
 IFS=$'\n'
 
@@ -51,7 +52,18 @@ function first_last_elements {
 }
 
 function ssh_command {
-    echo "?????????????????"
+    local user=$1
+    local ip_adr=$2
+    local command=$3
+    if grep "^${ip_adr}$" "$SERVER_LIST_PATH"; then
+        if grep "^${command}$" "$SSH_COMMANDS_PATH"; then
+            ssh  "$user"@"$ip_adr" -f "$command"
+        else
+            echo "Can't find command in $SSH_COMMANDS_PATH"
+        fi
+    else
+        echo "Can't find server in $SERVER_LIST_PATH"
+    fi
 }
 
 function string_to_array {
