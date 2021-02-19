@@ -22,7 +22,7 @@ help()
 
 SERVER_LIST_PATH="/etc/server_list"
 SSH_COMMANDS_PATH="/etc/ssh_commands"
-SENT_DEFAULT_VALUE="SENT=”First Second Tree Goal Last”"
+SENT_VALUE_PATH="/etc/variable_file"
 IFS=$'\n'
 
 function servers_list_adrs {
@@ -44,7 +44,7 @@ function lowercase {
 
 function first_last_elements {
     if [ $# -eq 0 ]; then
-        local SENT=$SENT_DEFAULT_VALUE
+        local SENT=`cat $SENT_VALUE_PATH` &>/dev/null
     else
         local SENT=$1
     fi
