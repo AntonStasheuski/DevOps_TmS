@@ -20,7 +20,7 @@ DEFAULT_GROUP="root"
 
 function add_user {
   echo "Start create user: $USER_NAME"
-  sudo useradd -s /bin/bash -d ${HOME_DIR}/${USER_NAME} -m -G sudo ${USER_NAME}
+  sudo useradd -s /bin/bash -d ${HOME_DIR}/${USER_NAME} -m -G wheel ${USER_NAME}
 }
 
 function ssh_key {
@@ -33,7 +33,6 @@ function ssh_key {
 
 function add_user_to_sudoer {
   echo "Add $USER_NAME to sudoer"
-  sudo usermod -aG sudo $USER_NAME
   sudo sh -c "echo \"$USER_NAME    ALL=(ALL:ALL) NOPASSWD:ALL\" >> /etc/sudoers"
 }
 
@@ -54,12 +53,12 @@ function disable_root_login {
 
 function install_packages {
   echo "Install packages..."
-  sudo apt-get -y --ignore-missing install $PACKAGES &> /dev/null
+  sudo yum -y install $PACKAGES &> /dev/null
 }
 
 function update_dns {
   echo "update DNS"
-  sudo chmod 777 $RESOLV_CONF
+  sudo chmod 700 $RESOLV_CONF
   sudo echo "nameserver $DNS_1" > $RESOLV_CONF
   sudo echo "nameserver $DNS_2" >> $RESOLV_CONF
 }
@@ -68,17 +67,17 @@ function myapp_status {
   echo "Check $MY_APP availability"
   if ping -c 1 $MY_APP &> /dev/null
   then
-    echo "$MY_APP available"
+    echo "    $MY_APP available"
   else
-    echo "$MY_APP unvailable"
+    echo "    $MY_APP unvailable"
     update_hosts
   fi
 }
 
 function white_ip {
   echo "Check white IP"
-  local ip=`host myip.opendns.com resolver1.opendns.com | grep "myip.opendns.com has" | awk '{print $4}'`
-  echo "White IP: $ip"
+  local ip=`curl -s ifconfig.me`
+  echo "    White IP: $ip"
 }
 
 function create_dir {
@@ -102,4 +101,3 @@ update_dns
 myapp_status
 white_ip
 change_dir_owner
-
