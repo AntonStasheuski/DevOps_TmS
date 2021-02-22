@@ -21,3 +21,7 @@ Create provisioning script for vagrant(Centos 8.3). Instance should have static 
 
 * https://www.vagrantup.com/docs/cli/provision
 * https://www.vagrantup.com/docs/provisioning/shell
+
+# Images
+
+![alt text](https://i.ibb.co/41qLNS4/Screenshot-2021-02-21-at-15-58-44.png)
