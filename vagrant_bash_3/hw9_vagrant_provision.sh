@@ -4,7 +4,6 @@ USER_NAME="hw9"
 HOME_DIR="/opt"
 ETC_HOSTS="/etc/hosts"
 ETC_HOSTS_RECORD="127.0.0.1 myownapp.com"
-VM_NAME="vagrant-ubuntu-trusty-64"
 PASSWORD_AUTH="PasswordAuthentication yes"
 PASSWORD_NO_AUTH="PasswordAuthentication no"
 SSHD_CONF_PATH="/etc/ssh/sshd_config"
@@ -21,14 +20,6 @@ DEFAULT_GROUP="root"
 function add_user {
   echo "Start create user: $USER_NAME"
   sudo useradd -s /bin/bash -d ${HOME_DIR}/${USER_NAME} -m -G wheel ${USER_NAME}
-}
-
-function ssh_key {
-  echo "Generate ssh keys for: $USER_NAME"
-  sudo mkdir ${HOME_DIR}/${USER_NAME}/.ssh
-  sudo chmod 700 ${HOME_DIR}/${USER_NAME}/.ssh
-  sudo su $USER_NAME
-  ssh-keygen -t rsa -f ${HOME_DIR}/${USER_NAME}/.ssh/id_rsa -q -P "" -C "${USER_NAME}@${VM_NAME}"
 }
 
 function add_user_to_sudoer {
@@ -92,7 +83,6 @@ function change_dir_owner {
 
 add_user
 add_user_to_sudoer
-ssh_key
 update_hosts
 disable_password_connection
 disable_root_login
