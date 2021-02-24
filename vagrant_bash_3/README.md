@@ -25,3 +25,4 @@ Create provisioning script for vagrant(Centos 8.3). Instance should have static 
 # Images
 
 ![alt text](https://i.ibb.co/41qLNS4/Screenshot-2021-02-21-at-15-58-44.png)
+![alt text](https://i.ibb.co/3d6Gn9D/Screenshot-2021-02-24-at-19-35-07.png)
