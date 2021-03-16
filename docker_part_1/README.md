@@ -1,28 +1,44 @@
 # Task list
 
-Create provisioning script for vagrant(Centos 8.3). Instance should have static IP for SSH connection.
+1. Run container from ubuntu image: 
+    ```$ docker run -d --name ubuntu-container ubuntu sleep 500```
+    * Login to this container: 
+    ```$ docker exec -it ubuntu-container /bin/bash```
+    * Create file /sizefile with size 100MB:  
+    ```$ dd if=/dev/zero of=sizefile bs=1024 count=102400```
+    * Check docker container size(RW layer and virtual size): 
+    ```$ docker ps --size | grep 'ubuntu-container'```
+    * Delete container: 
+    ```$ docker container stop ubuntu-container && docker container rm ubuntu-container```
+2. Create your own image hw14 based on ubuntu image
+    ```docker build ./ -t hw_14_image:0.1```
+    * For this use Dockerfile
+    * Add file /sizefile with size =100MB to Dockerfile
+    * Run container from hw14 images
+    ```docker run -d --name hw14-container hw_14_image:0.1 sleep 500```
+    * Check docker container size(RW layer and virtual size)
+    * Push your image to your docker hub account(create if account does not exist)
+    ```docker pull antonstasheuski/dockerhub:hw_14_image```
+3. Run containers from ubuntu image
+    * With first mount use bind mount
+    ```docker run -d --rm --name ubuntu-container -v $(pwd)/bash_scripts:/app ubuntu sleep 500```
+    * With second run use volume mount
+    ```docker run -d --rm --name ubuntu-container -v myvol:/app ubuntu sleep 500```
+4. Run nginx container from nginx image.
+    * Map 8081 port to 80 port of nginx container. Check it
+    ```docker run --name mynginx1 -p 80:80 -d nginx```
+    * Do not use a particular port and get any random port mapped to 80 port of your nginx container. [image1]
 
-1. Provision script(hw8_vagrant_provision.sh) should do following actions:
-    * Create service user hw8. Home folder = /opt/hw8. Add ssh public key for           this user.
-    * Add this user to sudoers group(sudo without password)
-    * Update /etc/hosts file with record “127.0.0.1 myownapp.com”
-    * Restrict ssh with access via password
-    * Restrict ssh root access
-    * Install mc, vim and git packages
-    * Update DNS to 8.8.8.8 and 1.1.1.1
-    * Check that address myownapp.com can be resolved. If not execute step 3
-    * Print external(White) IP of you vagrant centos instance
-    * Create dir /var/log/myownapp and set up hw8 user as owner of the dir
-2. Learn rsync command
-3. Refresh your knowledge regarding useful bash commands and 12 factors
-4. How to put iftop command output to the file?
 
 # Documentation
 
-* https://www.vagrantup.com/docs/cli/provision
-* https://www.vagrantup.com/docs/provisioning/shell
+* https://docs.docker.com/
+* https://codefresh.io/docker-tutorial/build-docker-image-dockerfiles/
 
 # Images
 
-![alt text](https://i.ibb.co/41qLNS4/Screenshot-2021-02-21-at-15-58-44.png)
-![alt text](https://i.ibb.co/3d6Gn9D/Screenshot-2021-02-24-at-19-35-07.png)
+Nginx container: ![image1](https://i.ibb.co/tQD7mmW/Screenshot-2021-03-16-at-23-09-33.png)
+
+# Links
+
+My docker hub: https://hub.docker.com/u/antonstasheuski
